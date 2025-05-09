@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Button
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,7 +68,7 @@ fun BlogListScreen(
             .collect { lastVisibleItemIndex ->
                 lastVisibleItemIndex?.let {
                     if (uiState is BlogUiState.Success &&
-                        it >= listState.layoutInfo.totalItemsCount - 1 &&
+                        it >= listState.layoutInfo.totalItemsCount - 2 &&
                         !(uiState as BlogUiState.Success).isLoadingMore &&
                         !(uiState as BlogUiState.Success).isLastPage
                     ) {
@@ -80,6 +83,19 @@ fun BlogListScreen(
             CommonToolbar(title = "Vrid Blog",showBackButton = false){
 
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    viewModel.refreshBlogs()
+                },
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = ""
+                    )
+                }
+            )
         }
     ) { paddingValues ->
         when (val state = uiState) {
@@ -122,14 +138,7 @@ fun BlogListScreen(
                         }
                     }
 
-                    Button(
-                        onClick = { viewModel.refreshBlogs() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.sdp)
-                    ) {
-                        Text("Refresh")
-                    }
+
                 }
             }
             is BlogUiState.Error -> {
